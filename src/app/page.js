@@ -8,6 +8,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 export default function Home() {
   const videoRef = useRef(null);
+  const canvasRef = useRef(null); // Ref for the canvas element
   const [output, setOutput] = useState('');
   const [uploadedImage, setUploadedImage] = useState(null); // Store uploaded image
   const [isCameraMode, setIsCameraMode] = useState(true); // Toggle between camera and upload
@@ -45,7 +46,21 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Additional processing code can go here (e.g., capturing image from video or uploaded image)
+    if (videoRef.current) {
+      // Get the canvas context and set the canvas size to the video size
+      const canvas = canvasRef.current;
+      const context = canvas.getContext("2d");
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+
+      // Draw the current video frame on the canvas
+      context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+
+      // Get the image data URL from the canvas and set it as the uploaded image
+      const imageData = canvas.toDataURL("image/png");
+      setUploadedImage(imageData);
+      setIsCameraMode(false); // Switch to the image mode to display the captured image
+    }
   };
 
   const handleImageUpload = (e) => {
@@ -77,18 +92,22 @@ export default function Home() {
           {isCameraMode ? (
             <video ref={videoRef} className="media" autoPlay playsInline />
           ) : uploadedImage ? (
-            <img src={uploadedImage} alt="Uploaded" className="media" />
+            <img src={uploadedImage} alt="Captured" className="media" />
           ) : null}
         </div>
+
+        {/* Hidden canvas used to capture the image */}
+        <canvas ref={canvasRef} style={{ display: "none" }} />
+
         <button onClick={swapCamera} className="swap-btn">
           <FontAwesomeIcon icon={faCameraRotate} />
-          </button>
+        </button>
+
         {/* Buttons */}
         <div className="button-container">
-
           <form onSubmit={handleSubmit} className="form-container">
             <button type="submit" className="btn submit-btn">
-            <FontAwesomeIcon icon={faMagnifyingGlass}/>
+              <FontAwesomeIcon icon={faMagnifyingGlass} />
             </button>
           </form>
         </div>
