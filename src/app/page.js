@@ -46,23 +46,48 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Ensure the video feed is available for capturing
+    if (videoRef.current) {
+      const canvas = canvasRef.current;
+      const context = canvas.getContext("2d");
   
-    const formData = new FormData();
-    formData.append("image", uploadedImage); // The captured or uploaded image
+      // Set canvas dimensions to the video frame size
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
   
-    try {
+      // Draw the current video frame to the canvas
+      context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+  
+      // Convert the canvas image to a Data URL (for debugging, and for sending to the server)
+      const imageData = canvas.toDataURL("image/png");
+  
+      // Debugging log to check if the image is captured properly
+      console.log("Captured Image Data URL:", imageData); 
+  
+      // Set the image data in state for possible preview
+      setUploadedImage(imageData); 
+  
+      // Send the captured image to the backend API for processing (Tesseract OCR)
+      const formData = new FormData();
+      formData.append("image", imageData);  // Append image data to the form
+  
+      // Send request to the backend (to your '/api/process-image' route)
       const response = await fetch("/api/process-image", {
         method: "POST",
         body: formData,
       });
+  
+      // Get the result back from the server
       const result = await response.json();
-      setOutput(result.result); // Display the extracted data
-    } catch (error) {
-      console.error("Error processing image:", error);
+  
+      // Debug the OCR result in console
+      console.log("Backend OCR Output:", result); 
+  
+      // Set the result (OCR output) in the state to display on the page
+      setOutput(result.output); 
     }
   };
-  
-      
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
