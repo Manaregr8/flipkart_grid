@@ -21,6 +21,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    align-items: center;
   }
   
   .media {
@@ -35,21 +36,47 @@
   .button-container {
     position: fixed;
 bottom: 0;
+padding: 20px 0;
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: flex;
+    justify-content: center;
   }
-  
+  @keyframes borderPulse {
+    0% {
+      box-shadow: inset 0px 0px 0px 5px rgba(255, 255, 255,.4), 0px 0px 0px 0px rgba(255,255,255,1);
+    }
+    100% {
+      box-shadow: inset 0px 0px 0px 3px rgba(117, 117, 255,.2), 0px 0px 0px 10px rgba(255,255,255,0);
+    }
+  }
+  @keyframes hoverShine {
+    0%{
+      background-image: linear-gradient(135deg, rgba(255,255,255,.4) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0) 100%);
+    }
+    50%{
+      background-image: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.4) 50%, rgba(255,255,255,0) 100%);
+    }
+    100%{
+      background-image: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,.4) 100%);
+    }
+  }
   .btn {
     background-color: #007bff;
     color: white;
     border: none;
     cursor: pointer;
-    width: 100%;
     text-align: center;
     padding: 10px;
   }
-  
+  .submit-btn{
+    border-radius: 30px;
+    font-size: 18px;
+    padding: 10px 20px;
+    animation: borderPulse 1000ms infinite ease-out;
+  }
+  button:focus {
+    animation: borderPulse 1000ms infinite ease-out, hoverShine 200ms;
+  }
   .btn:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
@@ -60,9 +87,6 @@ bottom: 0;
   }
   
   /* Form container */
-  .form-container {
-    width: 100%;
-  }
   
   .submit-btn {
     background-color: #28a745;

@@ -82,25 +82,9 @@ export default function Home() {
 
         {/* Buttons */}
         <div className="button-container">
-          <button
-            className="btn"
-            onClick={switchToCameraMode}
-            disabled={isCameraMode}
-          >
-           Camera
-          </button>
-          <label className="btn">
-            Upload
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden-input"
-            />
-          </label>
           <form onSubmit={handleSubmit} className="form-container">
           <button type="submit" className="btn submit-btn">
-            Process
+            Capture
           </button>
         </form>
         </div>
