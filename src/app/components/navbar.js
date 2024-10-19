@@ -1,4 +1,4 @@
-import logo from "./logo.jpg";
+import logo from "./logo.png";
 import Image from "next/image";
 import Styles from "./navbar.css";
 
