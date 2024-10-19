@@ -104,17 +104,6 @@ export default function Home() {
           </button>
         </form>
         </div>
-
-        {/* Submit Button */}
-
-
-        {/* Display Output */}
-        {output && (
-          <div className="output">
-            <h3>Detected Text:</h3>
-            <p>{output}</p>
-          </div>
-        )}
       </main>
     </div>
   );
