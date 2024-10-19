@@ -46,22 +46,23 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (videoRef.current) {
-      // Get the canvas context and set the canvas size to the video size
-      const canvas = canvasRef.current;
-      const context = canvas.getContext("2d");
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-
-      // Draw the current video frame on the canvas
-      context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-
-      // Get the image data URL from the canvas and set it as the uploaded image
-      const imageData = canvas.toDataURL("image/png");
-      setUploadedImage(imageData);
-      setIsCameraMode(false); // Switch to the image mode to display the captured image
+  
+    const formData = new FormData();
+    formData.append("image", uploadedImage); // The captured or uploaded image
+  
+    try {
+      const response = await fetch("/api/process-image", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      setOutput(result.result); // Display the extracted data
+    } catch (error) {
+      console.error("Error processing image:", error);
     }
   };
+  
+      
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -86,32 +87,39 @@ export default function Home() {
 
   return (
     <div className="container">
-      <Navbar />
-      <main className="content">
-        <div className="media-container">
-          {isCameraMode ? (
-            <video ref={videoRef} className="media" autoPlay playsInline />
-          ) : uploadedImage ? (
-            <img src={uploadedImage} alt="Captured" className="media" />
-          ) : null}
+    <Navbar />
+    <main className="content">
+      <div className="media-container">
+        {isCameraMode ? (
+          <video ref={videoRef} className="media" autoPlay playsInline />
+        ) : uploadedImage ? (
+          <img src={uploadedImage} alt="Captured" className="media" />
+        ) : null}
+      </div>
+
+      {/* Hidden canvas used to capture the image */}
+      <canvas ref={canvasRef} style={{ display: "none" }} />
+
+      <button onClick={swapCamera} className="swap-btn">
+        <FontAwesomeIcon icon={faCameraRotate} />
+      </button>
+
+      {/* Form to submit the image */}
+      <div className="button-container">
+        <form onSubmit={handleSubmit} className="form-container">
+          <button type="submit" className="btn submit-btn">
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
+          </button>
+        </form>
+      </div>
+
+      {/* Display the OCR output */}
+      {output && (
+        <div className="output-container">
+          <h3>OCR Results:</h3>
+          <pre>{output}</pre>
         </div>
-
-        {/* Hidden canvas used to capture the image */}
-        <canvas ref={canvasRef} style={{ display: "none" }} />
-
-        <button onClick={swapCamera} className="swap-btn">
-          <FontAwesomeIcon icon={faCameraRotate} />
-        </button>
-
-        {/* Buttons */}
-        <div className="button-container">
-          <form onSubmit={handleSubmit} className="form-container">
-            <button type="submit" className="btn submit-btn">
-              <FontAwesomeIcon icon={faMagnifyingGlass} />
-            </button>
-          </form>
-        </div>
-      </main>
-    </div>
-  );
+      )}
+    </main>
+  </div>
 }
