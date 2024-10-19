@@ -62,12 +62,14 @@ padding: 20px 0;
   }
   .btn {
     background-color: #007bff;
-    color: white;
+        color: black;
     cursor: pointer;
     text-align: center;
   }
   .submit-btn{
-    border-radius: 30px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
     font-size: 19px;
     padding: 15px 25px;
     animation: borderPulse 1000ms infinite ease-out;
@@ -97,7 +99,7 @@ padding: 20px 0;
     border-radius: 50%;
   }
   .submit-btn {
-    background-color: #28a745;
+    background-color: white;
   }
   
   /* Output display */

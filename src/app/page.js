@@ -4,6 +4,7 @@ import Navbar from "./components/navbar";
 import "./home.css"; // Assuming you have custom CSS
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCameraRotate } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 export default function Home() {
   const videoRef = useRef(null);
@@ -87,7 +88,7 @@ export default function Home() {
 
           <form onSubmit={handleSubmit} className="form-container">
             <button type="submit" className="btn submit-btn">
-              Capture
+            <FontAwesomeIcon icon={faMagnifyingGlass}/>
             </button>
           </form>
         </div>
