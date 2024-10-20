@@ -46,48 +46,35 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Ensure the video feed is available for capturing
+  
     if (videoRef.current) {
       const canvas = canvasRef.current;
       const context = canvas.getContext("2d");
   
-      // Set canvas dimensions to the video frame size
       canvas.width = videoRef.current.videoWidth;
       canvas.height = videoRef.current.videoHeight;
   
-      // Draw the current video frame to the canvas
       context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
   
-      // Convert the canvas image to a Data URL (for debugging, and for sending to the server)
       const imageData = canvas.toDataURL("image/png");
   
-      // Debugging log to check if the image is captured properly
-      console.log("Captured Image Data URL:", imageData); 
+      setUploadedImage(imageData);
   
-      // Set the image data in state for possible preview
-      setUploadedImage(imageData); 
-  
-      // Send the captured image to the backend API for processing (Tesseract OCR)
-      const formData = new FormData();
-      formData.append("image", imageData);  // Append image data to the form
-  
-      // Send request to the backend (to your '/api/process-image' route)
       const response = await fetch("/api/process-image", {
         method: "POST",
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image: imageData }),
       });
   
-      // Get the result back from the server
       const result = await response.json();
+      console.log("Backend OCR Output:", result);
   
-      // Debug the OCR result in console
-      console.log("Backend OCR Output:", result); 
-  
-      // Set the result (OCR output) in the state to display on the page
-      setOutput(result.output); 
+      setOutput(result.output);
     }
   };
+  
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];

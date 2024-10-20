@@ -1,34 +1,36 @@
-import formidable from 'formidable';
-import { exec } from 'child_process';
+import { createWorker } from 'tesseract.js';
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-export default function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const form = new formidable.IncomingForm();
+    const { image } = req.body;
 
-    form.parse(req, (err, fields, files) => {
-      if (err) {
-        return res.status(400).json({ error: 'Error parsing the image.' });
-      }
+    if (!image) {
+      return res.status(400).json({ error: 'No image provided.' });
+    }
 
-      const imagePath = files.image.filepath; // Assuming the image is passed correctly
-      console.log("Image Path:", imagePath); // Debugging log
-
-      // Call the Python script with the image path
-      exec(`python tesseract.py ${imagePath}`, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Error: ${stderr}`);
-          return res.status(500).json({ error: stderr });
-        }
-        console.log(`Python Output: ${stdout}`); // Debug the Python output
-        res.status(200).json({ output: stdout });
+    try {
+      // Initialize the Tesseract worker
+      const worker = await createWorker({
+        logger: (m) => console.log(m), // Optional: Logs OCR progress
       });
-    });
+
+      // Start the worker
+      await worker.load();
+      await worker.loadLanguage('eng');
+      await worker.initialize('eng');
+
+      // Perform OCR on the image
+      const { data } = await worker.recognize(image);
+
+      // Terminate the worker after processing
+      await worker.terminate();
+
+      // Return the OCR result
+      return res.status(200).json({ output: data.text });
+    } catch (error) {
+      console.error('Error processing image with Tesseract:', error);
+      return res.status(500).json({ error: 'OCR processing failed' });
+    }
   } else {
     res.status(405).json({ message: 'Method not allowed' });
   }
