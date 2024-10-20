@@ -1,11 +1,13 @@
 nav{
     position: fixed;
     top:0;
+    left:0;
     width: 100%;
-    padding: 10px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center ;
+    padding: 10px;
+    display: flex;
     background-color: transparent;
     border-bottom: 1px solid #33333336;
     background-color: #33333336;
